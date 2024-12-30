@@ -1,17 +1,17 @@
 package app.strada.sagv
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.GridLayout
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast.LENGTH_LONG
+import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class Mesas : AppCompatActivity() {
     private lateinit var btnAgregarMesa: Button
     private lateinit var gridMesas: GridLayout
-    private var contadorMesas = 8
+    private var contadorMesas = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,19 +20,30 @@ class Mesas : AppCompatActivity() {
         btnAgregarMesa = findViewById(R.id.btnAgregarMesa)
         gridMesas = findViewById(R.id.gridMesas)
 
+        for (i in 1..8) {
+            agregarMesa()
+        }
+
         btnAgregarMesa.setOnClickListener {
             agregarMesa()
         }
 
+
     }
 
+
+
     private fun agregarMesa() {
+        val intent = Intent(this, NuevaOrden::class.java)
         val nuevaMesa = Button(this).apply {
             text = "Mesa $contadorMesas"
             textSize = 16f
             setPadding(8, 8, 8, 8)
             setOnClickListener {
-                // Acción al hacer clic en una mesa
+                var numMesa = this.text
+                intent.putExtra("mesaId", numMesa)
+                println("NUMERO DE MESA: $numMesa")
+                startActivity(intent)
             }
         }
 

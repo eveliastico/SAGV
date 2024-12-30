@@ -3,6 +3,8 @@ package app.strada.sagv
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast.LENGTH_LONG
+import android.widget.Toast.makeText
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -28,20 +30,28 @@ class NuevaOrden : AppCompatActivity() {
         btnBebidas = findViewById(R.id.btnBebidas)
         btnPostres = findViewById(R.id.btnPostres)
 
+        val intentNumMesa = intent.getStringExtra("mesaId")
+
         btnPlatillos.setOnClickListener(){
             val intent = Intent(this, Menu::class.java)
             intent.putExtra("categoria", "Platillos")
+            intent.putExtra("mesaId", intentNumMesa)
+            makeText(this, "Mesa Seleccionada: $intentNumMesa", LENGTH_LONG).show()
+            println("HOLAAAA")
             startActivity(intent)
+
         }
 
         btnBebidas.setOnClickListener{
             val intent = Intent(this, Menu::class.java)
             intent.putExtra("categoria", "Bebidas")
+            intent.putExtra("mesaId", intentNumMesa)
             startActivity(intent)
         }
         btnPostres.setOnClickListener{
             val intent = Intent(this, Menu::class.java)
             intent.putExtra("categoria", "Postres")
+            intent.putExtra("mesaId", intentNumMesa)
             startActivity(intent)
         }
 
