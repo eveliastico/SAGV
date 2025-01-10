@@ -38,7 +38,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/txtTitulo"
-        app:layout_constraintBottom_toTopOf="@id/btnVolver"
+        app:layout_constraintBottom_toTopOf="@id/btnSiguiente"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/divider">
 
@@ -50,39 +50,37 @@
             android:padding="8dp" />
     </ScrollView>
 
-    <!-- Línea divisora -->
     <View
         android:id="@+id/divider"
         android:layout_width="1dp"
         android:layout_height="0dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintTop_toBottomOf="@id/txtTitulo"
-        app:layout_constraintBottom_toTopOf="@id/btnVolver"
+        app:layout_constraintBottom_toTopOf="@id/btnSiguiente"
         app:layout_constraintStart_toEndOf="@id/scrollPlatillos"
         app:layout_constraintEnd_toStartOf="@id/linearDetalles"/>
 
-    <!-- Sección de detalles -->
     <LinearLayout
         android:id="@+id/linearDetalles"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="400dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/txtTitulo"
-        app:layout_constraintBottom_toTopOf="@id/btnVolver"
+        app:layout_constraintBottom_toTopOf="@id/btnSiguiente"
         app:layout_constraintStart_toEndOf="@id/divider"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.1">
 
         <TextView
             android:id="@+id/txtPlatilloSeleccionado"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Taco Pastor"
+            android:text=""
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Contador de cantidad -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -115,7 +113,6 @@
                 android:textSize="22dp"/>
         </LinearLayout>
 
-        <!-- Notas -->
         <EditText
             android:id="@+id/editNotas"
             android:layout_width="match_parent"
@@ -125,24 +122,47 @@
             android:gravity="top"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Botón Agregar -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btnNoCebolla"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:text="N/Ceb"
+            android:textSize="10dp"/>
+
+        <Button
+            android:id="@+id/btnNoCilantro"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:text="N/Cil"
+            android:textSize="10dp"/>
+
+    </LinearLayout>
+
+
+
         <Button
             android:id="@+id/btnAgregar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AGREGAR"
             android:layout_gravity="center_horizontal"
-
             android:textColor="@android:color/white"/>
 
     </LinearLayout>
 
-    <!-- Botón Volver -->
     <Button
-        android:id="@+id/btnVolver"
-        android:layout_width="match_parent"
+        android:id="@+id/btnSiguiente"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="VOLVER"
+        android:text="SIGUIENTE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

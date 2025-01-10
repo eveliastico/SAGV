@@ -1,0 +1,48 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="8dp">
+
+    <!-- Nombre del Producto -->
+    <TextView
+        android:id="@+id/txtProducto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Nombre del Producto"
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
+
+    <!-- Campo para la Cantidad -->
+    <EditText
+        android:id="@+id/txtCantidad"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:hint="0" />
+
+    <!-- Botón Sumar -->
+    <Button
+        android:id="@+id/btnSumar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/btn_round"
+        android:text="+"
+        android:textSize="18sp"
+        android:textColor="@android:color/white" />
+
+    <!-- Botón Restar -->
+    <Button
+        android:id="@+id/btnRestar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/btn_round"
+        android:text="-"
+        android:textSize="18sp"
+        android:textColor="@android:color/white" />
+</LinearLayout>

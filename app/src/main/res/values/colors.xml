@@ -3,4 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="turquesa">#1e81b0</color>
+
+    <color name="color_botones"></color>
+    <color name="btn_presionado"></color>
 </resources>
