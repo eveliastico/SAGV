@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import app.strada.sagv.DataClasses.Orden
 
 class Inicio : AppCompatActivity() {
 
@@ -34,6 +35,7 @@ class Inicio : AppCompatActivity() {
 
         btnNuevaOrden.setOnClickListener{
             val intent = Intent(this, Mesas::class.java)
+            intent.putExtra("orden", Orden.newOrden())
             startActivity(intent)
         }
     }

@@ -2,54 +2,72 @@ package app.strada.sagv
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.GridLayout
-import android.widget.Toast.LENGTH_LONG
-import android.widget.Toast.makeText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import app.strada.sagv.DataClasses.Orden
+import app.strada.sagv.apiService.APIOrden
+import app.strada.sagv.dtos.OrdenDTO
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.http.Body
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import app.strada.sagv.apiService.APIClient
+
 
 class Mesas : AppCompatActivity() {
     private lateinit var btnAgregarMesa: Button
     private lateinit var gridMesas: GridLayout
     private var contadorMesas = 1
+    private var orden: Orden? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mesas)
 
-        btnAgregarMesa = findViewById(R.id.btnAgregarMesa)
-        gridMesas = findViewById(R.id.gridMesas)
-
-        for (i in 1..8) {
-            agregarMesa()
-        }
-
-        btnAgregarMesa.setOnClickListener {
-            agregarMesa()
-        }
-
-
+        inicializarVista()
+        cargarOrdenDesdeIntent()
+        inicializarMesas()
     }
 
+    private fun inicializarVista() {
+        btnAgregarMesa = findViewById(R.id.btnAgregarMesa)
+        gridMesas = findViewById(R.id.gridMesas)
+        btnAgregarMesa.setOnClickListener { agregarMesa() }
+    }
 
+    private fun cargarOrdenDesdeIntent() {
+        orden = intent.getParcelableExtra("orden", Orden::class.java)
+    }
+
+    private fun inicializarMesas() {
+        repeat(9) { agregarMesa() }
+    }
 
     private fun agregarMesa() {
-        val intent = Intent(this, NuevaOrden::class.java)
+        val numeroMesa = contadorMesas
         val nuevaMesa = Button(this).apply {
-            text = "Mesa $contadorMesas"
+            text = "Mesa $numeroMesa"
             textSize = 16f
             setPadding(8, 8, 8, 8)
+            tag = numeroMesa
+
             setOnClickListener {
-                var numMesa = this.text
-                intent.putExtra("mesaId", numMesa)
-                println("NUMERO DE MESA: $numMesa")
-                startActivity(intent)
+                val numMesaSeleccionada = (it as Button).tag as Int
+                manejarSeleccionMesa(numMesaSeleccionada)
             }
         }
 
         val layoutParams = GridLayout.LayoutParams().apply {
             columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-            width = 0 // Distribuir uniformemente en columnas
+            width = 0
         }
         nuevaMesa.layoutParams = layoutParams
 
@@ -57,4 +75,40 @@ class Mesas : AppCompatActivity() {
         contadorMesas++
     }
 
+    private fun manejarSeleccionMesa(numMesa: Int) {
+        orden?.numMesa = numMesa
+
+        Log.d("MesaSeleccionada", "Número de mesa asignado a la orden: $numMesa")
+        Toast.makeText(this, "Mesa seleccionada: $numMesa", Toast.LENGTH_SHORT).show()
+
+        orden?.let {
+            enviarOrden(it)
+        }
+
+        navegarANuevaOrden()
+    }
+
+    private fun enviarOrden(orden: Orden) {
+
+        val ordenDTO = OrdenDTO.fromOrden(orden)
+
+        lifecycleScope.launch {
+            try {
+                val response = APIClient.apiOrden.saveOrden(ordenDTO)
+                if (response.isSuccessful) {
+                    println("Orden guardada exitosamente con fecha: ${ordenDTO.fechaHora}")
+                } else {
+                    println("Error al guardar la orden: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                println("Error de conexión: ${e.message}")
+            }
+        }
+    }
+
+    private fun navegarANuevaOrden() {
+        startActivity(Intent(this, NuevaOrden::class.java).apply {
+            putExtra("orden", orden)
+        })
+    }
 }

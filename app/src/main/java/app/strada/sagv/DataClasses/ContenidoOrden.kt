@@ -5,9 +5,9 @@ package app.strada.sagv.DataClasses
  * CantidadProducto hace referencia a la cantidad de ese producto desea consumir.
  * Notas hace referencia a las notas sobre esa orden, por ejemplo: Sin cebolla, sin hielo.
  */
-data class ContenidoOrden(var id: Int, var producto: Producto, var cantidadProducto: Int, var notas: String){
+data class ContenidoOrden(var id: Long, var producto: Producto, var cantidadProducto: Int, var notas: String){
     companion object {
-        private var ultimoId = 0
+        private var ultimoId:Long = 0
         fun crear(producto: Producto, cantidadProducto: Int, notas: String): ContenidoOrden {
             val nuevoId = ++ultimoId
             return ContenidoOrden(nuevoId, producto, cantidadProducto, notas)
