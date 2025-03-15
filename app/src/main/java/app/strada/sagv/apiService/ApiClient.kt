@@ -22,10 +22,16 @@ object APIClient {
         .addInterceptor(logging)
         .build()
 
-    val apiOrden: APIOrden = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:8080/") // Emulador accediendo al localhost
-        .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
-        .client(client)
-        .build()
-        .create(APIOrden::class.java)
+    private fun <T> createService(serviceClass: Class<T>): T {
+        return Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:8080/") // Emulador accediendo al localhost
+            .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
+            .client(client)
+            .build()
+            .create(serviceClass)
+    }
+
+    val apiOrden: APIOrden = createService(APIOrden::class.java)
+    val apiProducto: ApiProducto = createService(ApiProducto::class.java)
+    val apiContenidoOrden: APIContenidoOrden = createService(APIContenidoOrden::class.java)
 }

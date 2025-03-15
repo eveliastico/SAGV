@@ -35,6 +35,7 @@ class Inicio : AppCompatActivity() {
 
         btnNuevaOrden.setOnClickListener{
             val intent = Intent(this, Mesas::class.java)
+            // Se crea una nueva orden y se inicializa con la fecha
             intent.putExtra("orden", Orden.newOrden())
             startActivity(intent)
         }

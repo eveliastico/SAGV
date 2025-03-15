@@ -26,7 +26,8 @@ class Mesas : AppCompatActivity() {
     private lateinit var btnAgregarMesa: Button
     private lateinit var gridMesas: GridLayout
     private var contadorMesas = 1
-    private var orden: Orden? = null
+    // Ser recive la orden y se le añade la mesa.
+    private var objOrden: Orden? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +45,7 @@ class Mesas : AppCompatActivity() {
     }
 
     private fun cargarOrdenDesdeIntent() {
-        orden = intent.getParcelableExtra("orden", Orden::class.java)
+        objOrden = intent.getParcelableExtra("orden", Orden::class.java)
     }
 
     private fun inicializarMesas() {
@@ -76,12 +77,13 @@ class Mesas : AppCompatActivity() {
     }
 
     private fun manejarSeleccionMesa(numMesa: Int) {
-        orden?.numMesa = numMesa
+        // Aqui se le asigna la mesa a la orden
+        objOrden?.numMesa = numMesa
 
         Log.d("MesaSeleccionada", "Número de mesa asignado a la orden: $numMesa")
         Toast.makeText(this, "Mesa seleccionada: $numMesa", Toast.LENGTH_SHORT).show()
 
-        orden?.let {
+        objOrden?.let {
             enviarOrden(it)
         }
 
@@ -89,26 +91,35 @@ class Mesas : AppCompatActivity() {
     }
 
     private fun enviarOrden(orden: Orden) {
-
         val ordenDTO = OrdenDTO.fromOrden(orden)
 
         lifecycleScope.launch {
             try {
                 val response = APIClient.apiOrden.saveOrden(ordenDTO)
+
                 if (response.isSuccessful) {
-                    println("Orden guardada exitosamente con fecha: ${ordenDTO.fechaHora}")
+                    val ordenGuardada = response.body()
+                    if (ordenGuardada != null) {
+                        objOrden?.id = ordenGuardada.id
+                        Log.d("OrdenGuardada", "Orden guardada con ID: ${objOrden?.id}")
+
+                        // Solo navega después de actualizar el ID
+                        navegarANuevaOrden()
+                    } else {
+                        Log.e("ErrorOrden", "El servidor no devolvió una orden válida")
+                    }
                 } else {
-                    println("Error al guardar la orden: ${response.message()}")
+                    Log.e("ErrorOrden", "Error al guardar la orden: ${response.message()}")
                 }
             } catch (e: Exception) {
-                println("Error de conexión: ${e.message}")
+                Log.e("ErrorConexion", "Error de conexión: ${e.message}")
             }
         }
     }
 
     private fun navegarANuevaOrden() {
         startActivity(Intent(this, NuevaOrden::class.java).apply {
-            putExtra("orden", orden)
+            putExtra("orden", objOrden)
         })
     }
 }

@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import app.strada.sagv.DataClasses.Orden
 
 class NuevaOrden : AppCompatActivity() {
 
@@ -26,19 +27,28 @@ class NuevaOrden : AppCompatActivity() {
             insets
         }
 
-        val numMesa = intent.getStringExtra("mesaId")
+        // Se recibe la orden desde Mesas
+        val orden = intent.getParcelableExtra("orden", Orden::class.java)
 
-        btnPlatillos.setOnClickListener { navegarAMenu("Platillos", numMesa) }
-        btnBebidas.setOnClickListener { navegarAMenu("Bebidas", numMesa) }
-        btnPostres.setOnClickListener { navegarAMenu("Postres", numMesa) }
+        btnPlatillos.setOnClickListener {
+            navegarAMenu("PLATILLO", orden)
+        }
+        btnBebidas.setOnClickListener {
+            navegarAMenu("BEBIDA", orden)
+        }
+        btnPostres.setOnClickListener {
+            navegarAMenu("POSTRE", orden)
+        }
     }
 
-    private fun navegarAMenu(categoria: String, numMesa: String?) {
+    private fun navegarAMenu(categoria: String, orden: Orden?) {
+
         val intent = Intent(this, Menu::class.java).apply {
             putExtra("categoria", categoria)
-            putExtra("mesaId", numMesa)
+            putExtra("orden", orden)
+
         }
-        Toast.makeText(this, "Mesa Seleccionada: $numMesa", Toast.LENGTH_LONG).show()
+        // Toast.makeText(this, "Categoria Seleccionada: ${orden?.numMesa}", Toast.LENGTH_LONG).show()
         startActivity(intent)
     }
 }
