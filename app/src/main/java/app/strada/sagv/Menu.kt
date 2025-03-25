@@ -1,5 +1,6 @@
 package app.strada.sagv
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -29,6 +30,7 @@ class Menu : AppCompatActivity() {
     private val listaOrdenesMesa = mutableListOf<ContenidoOrden>()
     private var productoSeleccionado: Producto? = null
     private lateinit var listaProductos: List<ProductoDTO>
+    private lateinit var listaProductosAgregados: List<ProductoDTO>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,7 @@ class Menu : AppCompatActivity() {
 
         val btnDecrementar = findViewById<Button>(R.id.btnDecrementar)
         val btnIncrementar = findViewById<Button>(R.id.btnIncrementar)
+        val btnSiguiente = findViewById<Button>(R.id.btnSiguiente)
         val linearPlatillos = findViewById<LinearLayout>(R.id.linearPlatillos)
         val txtCantidad = findViewById<TextView>(R.id.txtCantidad)
         var numeroMesa = findViewById<TextView>(R.id.numMesa)
@@ -80,6 +83,17 @@ class Menu : AppCompatActivity() {
                 Toast.makeText(this@Menu, "Error de conexión: ${e.message}", LENGTH_LONG).show()
             }
         }
+        /*
+        * Si la categoria es Platillo se muestran los botones de no cebolla y no cilantro
+        * si no, no se muestran los botones
+        * */
+        if(categoria == CategoriaProducto.PLATILLO.toString()){
+            btnNoCebolla.visibility = Button.VISIBLE
+            btnNoCilantro.visibility = Button.VISIBLE
+        }else{
+            btnNoCebolla.visibility = Button.GONE
+            btnNoCilantro.visibility = Button.GONE
+        }
 
         btnNoCebolla.setOnClickListener {
             var textoEt = etNotas.text
@@ -93,9 +107,9 @@ class Menu : AppCompatActivity() {
 
         btnAgregarOrden.setOnClickListener {
             if (txtCantidad.text.toString().toInt() == 0) {
-                Toast.makeText(this, "Ingresa un platillo", LENGTH_LONG).show()
+                Toast.makeText(this, "Ingresa un producto", LENGTH_LONG).show()
             } else if (productoSeleccionado == null) {
-                Toast.makeText(this, "Selecciona un platillo", LENGTH_LONG).show()
+                Toast.makeText(this, "Selecciona un producto", LENGTH_LONG).show()
             } else {
                 print("ID DE LA ORDEN: "+orden?.id)
                 // Registrar la orden
@@ -124,7 +138,15 @@ class Menu : AppCompatActivity() {
             val incrementarProducto = txtCantidad.text.toString().toInt() + 1
             txtCantidad.text = incrementarProducto.toString()
         }
+
+        btnSiguiente.setOnClickListener {
+            val intent = Intent(this, ResumenOrden::class.java)
+            intent.putExtra("orden", orden)
+            startActivity(intent)
+        }
     }
+
+
 
     /**
      * Agrega botones dinámicos al contenedor de platillos(Menu)
