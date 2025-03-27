@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import app.strada.sagv.DataClasses.CategoriaProducto
 import app.strada.sagv.DataClasses.ContenidoOrden
+import app.strada.sagv.DataClasses.ItemProducto
 import app.strada.sagv.DataClasses.Orden
 import app.strada.sagv.DataClasses.Producto
 import app.strada.sagv.apiService.APIClient
@@ -23,14 +24,22 @@ import app.strada.sagv.apiService.ApiProducto
 import app.strada.sagv.dtos.ContenidoOrdenDTO
 import app.strada.sagv.dtos.ProductoDTO
 import kotlinx.coroutines.launch
+import kotlin.collections.mutableListOf
 
 class Menu : AppCompatActivity() {
 
     private lateinit var txtPlatilloSeleccionado: TextView
-    private val listaOrdenesMesa = mutableListOf<ContenidoOrden>()
     private var productoSeleccionado: Producto? = null
     private lateinit var listaProductos: List<ProductoDTO>
-    private lateinit var listaProductosAgregados: List<ProductoDTO>
+    /*
+    * listaProductosAgregados, paso la lista a la siguiente vista para ver un resumen de lo que
+    * se agrego.
+    * */
+    private var listaProductosAgregados = mutableListOf<ContenidoOrdenDTO>()
+    /*
+    * Esta lista convierte la lista de ContenidoOrdenDTO a una lista de ItemProducto
+    * */
+    private var listaItems = mutableListOf<ItemProducto>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,10 +151,10 @@ class Menu : AppCompatActivity() {
         btnSiguiente.setOnClickListener {
             val intent = Intent(this, ResumenOrden::class.java)
             intent.putExtra("orden", orden)
+            intent.putParcelableArrayListExtra("listaItems", ArrayList(listaItems))
             startActivity(intent)
         }
     }
-
 
 
     /**
@@ -186,6 +195,9 @@ class Menu : AppCompatActivity() {
         }
     }
 
+    /*
+    * Este metodo se encarga de registrar el ContenidoOrden en la BD.
+    * */
     private fun registrarContenidoOrden(contenidoOrden: ContenidoOrden) {
 
         val contenidoOrdenDTO = ContenidoOrdenDTO.fromContenidoOrden(contenidoOrden)
@@ -196,6 +208,9 @@ class Menu : AppCompatActivity() {
                     val response = APIClient.apiContenidoOrden.saveContenidoOrden(contenidoOrdenDTO)
                     if (response.isSuccessful) {
                         Toast.makeText(this@Menu, "ContenidoOrden registrado", LENGTH_LONG).show()
+                        //listaProductosAgregados.add(contenidoOrdenDTO)
+                        listaItems.add(ItemProducto(txtPlatilloSeleccionado.text.toString(), contenidoOrdenDTO.cantidadProducto))
+
                     } else {
                         Toast.makeText(
                             this@Menu,

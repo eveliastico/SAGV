@@ -10,8 +10,8 @@ import app.strada.sagv.R
 
 class ProductoViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
-    val btnProducto = view.findViewById<Button>(R.id.btnProducto)
-    val etCantidad = view.findViewById<EditText>(R.id.etCantidadProducto)
+    val btnProducto = view.findViewById<Button>(R.id.txtNombreProducto)
+    val etCantidad = view.findViewById<EditText>(R.id.txtCantidad)
     val btnAumentar: ImageButton = itemView.findViewById(R.id.btnAumentar)
     val btnDisminuir: ImageButton = itemView.findViewById(R.id.btnDisminuir)
 
