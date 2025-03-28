@@ -10,7 +10,6 @@ import android.widget.Toast
 import android.widget.Toast.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +19,6 @@ import app.strada.sagv.DataClasses.ItemProducto
 import app.strada.sagv.DataClasses.Orden
 import app.strada.sagv.DataClasses.Producto
 import app.strada.sagv.apiService.APIClient
-import app.strada.sagv.apiService.ApiProducto
 import app.strada.sagv.dtos.ContenidoOrdenDTO
 import app.strada.sagv.dtos.ProductoDTO
 import kotlinx.coroutines.launch
@@ -30,6 +28,9 @@ class Menu : AppCompatActivity() {
 
     private lateinit var txtPlatilloSeleccionado: TextView
     private var productoSeleccionado: Producto? = null
+    /**
+     * Lista de productos que se mostrarán en el menú
+     */
     private lateinit var listaProductos: List<ProductoDTO>
     /*
     * listaProductosAgregados, paso la lista a la siguiente vista para ver un resumen de lo que
@@ -129,10 +130,17 @@ class Menu : AppCompatActivity() {
                     txtCantidad.text.toString().toInt(),
                     etNotas.text.toString()
                 )
-                registrarContenidoOrden(contenidoOrdenARegistrar)
+                //registrarContenidoOrden(contenidoOrdenARegistrar)
 
-                // listaOrdenesMesa.add(ordenARegistrar)
-                Toast.makeText(this, "Orden registrada", LENGTH_LONG).show()
+                // Se agrega un itemProducto a la lista de itemas agregados
+                listaItems.add(ItemProducto(
+                    contenidoOrdenARegistrar.idProducto,
+                    productoSeleccionado!!.nombre,
+                    contenidoOrdenARegistrar.cantidadProducto
+                ))
+                // Se agrega un ContenidoOrdenDTO a la lista de ContenidoOrdenDTO
+                listaProductosAgregados.add(ContenidoOrdenDTO.fromContenidoOrden(contenidoOrdenARegistrar))
+                Toast.makeText(this, "Producto agregado", LENGTH_LONG).show()
             }
         }
 
@@ -152,6 +160,7 @@ class Menu : AppCompatActivity() {
             val intent = Intent(this, ResumenOrden::class.java)
             intent.putExtra("orden", orden)
             intent.putParcelableArrayListExtra("listaItems", ArrayList(listaItems))
+            intent.putParcelableArrayListExtra("listaProductosAgregados", ArrayList(listaProductosAgregados))
             startActivity(intent)
         }
     }
@@ -175,11 +184,6 @@ class Menu : AppCompatActivity() {
                     setMargins(16, 8, 16, 8)
                 }
                 setOnClickListener {
-                    Toast.makeText(
-                        this@Menu,
-                        "Seleccionaste: ${producto.nombre}",
-                        LENGTH_SHORT
-                    ).show()
                     txtPlatilloSeleccionado.text = producto.nombre
                     productoSeleccionado = Producto.crear(
                         producto.nombre,
@@ -193,39 +197,5 @@ class Menu : AppCompatActivity() {
             }
             contenedor.addView(button)
         }
-    }
-
-    /*
-    * Este metodo se encarga de registrar el ContenidoOrden en la BD.
-    * */
-    private fun registrarContenidoOrden(contenidoOrden: ContenidoOrden) {
-
-        val contenidoOrdenDTO = ContenidoOrdenDTO.fromContenidoOrden(contenidoOrden)
-
-        try {
-            lifecycleScope.launch {
-                try {
-                    val response = APIClient.apiContenidoOrden.saveContenidoOrden(contenidoOrdenDTO)
-                    if (response.isSuccessful) {
-                        Toast.makeText(this@Menu, "ContenidoOrden registrado", LENGTH_LONG).show()
-                        //listaProductosAgregados.add(contenidoOrdenDTO)
-                        listaItems.add(ItemProducto(txtPlatilloSeleccionado.text.toString(), contenidoOrdenDTO.cantidadProducto))
-
-                    } else {
-                        Toast.makeText(
-                            this@Menu,
-                            "Error al registrar ContenidoOrden: ${response.message()}",
-                            LENGTH_LONG
-                        ).show()
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(this@Menu, "Error de conexión: ${e.message}", LENGTH_LONG).show()
-                }
-            }
-        }catch (error:Exception){
-            println("Error al registrar contenidoOrden: ${error.message}")
-        }
-
     }
 }

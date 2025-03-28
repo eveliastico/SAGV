@@ -87,7 +87,7 @@ class Mesas : AppCompatActivity() {
             enviarOrden(it)
         }
 
-        navegarANuevaOrden()
+        //navegarANuevaOrden()
     }
 
     private fun enviarOrden(orden: Orden) {

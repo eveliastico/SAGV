@@ -9,8 +9,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ContenidoOrdenDTO(
     val id: Long,
-    val cantidadProducto: Int,
-    val notas: String,
+    var cantidadProducto: Int,
+    var notas: String,
     val idProducto: Long,
     val idOrden: Long
 ) : Parcelable {
