@@ -1,5 +1,5 @@
 package app.strada.sagv
-
+// CAMBIAR EL NOMBRE DE ESTA CLASE A ALGO RESPECTIVO A LAS MESAS
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +12,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import app.strada.sagv.DataClasses.ContenidoOrden
 import app.strada.sagv.DataClasses.Orden
 import app.strada.sagv.Menu
 import app.strada.sagv.apiService.APIClient
+import app.strada.sagv.dtos.ContenidoOrdenDTO
 import app.strada.sagv.dtos.OrdenDTO
 import kotlinx.coroutines.launch
 
@@ -29,6 +31,7 @@ import kotlinx.coroutines.launch
 class RegistrarVenta : AppCompatActivity() {
 
     private lateinit var gridMesas: GridLayout
+    private lateinit var listaContenidoOrdenDTO: MutableList<ContenidoOrdenDTO>
     private lateinit var listaOrdenes: List<OrdenDTO>
     private var numeroMesas = 0
     // Ser recive la orden y se le añade la mesa.
@@ -46,6 +49,7 @@ class RegistrarVenta : AppCompatActivity() {
         inicializarVista()
         inicializarMesas()
     }
+
     private fun inicializarVista() {
         gridMesas = findViewById(R.id.gridMesas)
     }
@@ -65,7 +69,9 @@ class RegistrarVenta : AppCompatActivity() {
 
             setOnClickListener {
                 val numMesaSeleccionada = (it as Button).tag as Int
-                manejarSeleccionMesa(numMesaSeleccionada)
+                lifecycleScope.launch {
+                    manejarSeleccionMesa(numMesaSeleccionada)
+                }
             }
         }
 
@@ -79,8 +85,24 @@ class RegistrarVenta : AppCompatActivity() {
         contadorMesas++
     }
 
-    private fun manejarSeleccionMesa(numMesa: Int) {
-        // Aqui se le asigna la mesa a la orde
+    private suspend fun manejarSeleccionMesa(numMesa: Int) {
+        try {
+            val response = APIClient.apiOrden.getOrdenesByMesa(numMesa)
+            if (response.isSuccessful) {
+                listaOrdenes = response.body() ?: emptyList()
+
+                if(listaOrdenes.isNullOrEmpty()){
+                    Toast.makeText(this@RegistrarVenta, "No hay ordenes para esta mesa", LENGTH_LONG).show()
+                    return
+                }else{
+                    navegarANuevaOrden(listaOrdenes)
+                }
+
+            }
+        }catch (error: Exception){
+            error.printStackTrace()
+            Toast.makeText(this@RegistrarVenta, "Error de conexión: ${error.message}", LENGTH_LONG).show()
+        }
         Log.d("MesaSeleccionada", "Número de mesa asignado a la orden: $numMesa")
         Toast.makeText(this@RegistrarVenta, "Mesa seleccionada: $numMesa", Toast.LENGTH_SHORT).show()
     }
@@ -91,33 +113,24 @@ class RegistrarVenta : AppCompatActivity() {
      * ejemplo, objeto?.let{codigo a ejecutar si no es nulo}
      */
 
-    private fun getAllOrdenes(){
-        lifecycleScope.launch {
-            try {
-                val response = APIClient.apiOrden.getOrden();
-                if (response.isSuccessful) {
-                    listaOrdenes = response.body() ?: emptyList()
-                    // Se obtiene el numero de mesas de la BD para asignarlo al contador de mesas
-                    // y cargarla en el grid.
-                    numeroMesas = listaOrdenes.size
-                }else{
-                    Toast.makeText(
-                        this@RegistrarVenta,
-                        "Error al obtener las ordenes: ${response.message()}",
-                        LENGTH_LONG
-                    ).show()
-                }
-            }catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(this@RegistrarVenta, "Error de conexión: ${e.message}", LENGTH_LONG).show()
+    /**
+     * Que necesito de un item?
+     * 1. Producto ID
+     * 2. Nombre
+     * 3. Cantidad
+     * 4. Precio unitario
+     */
+    private fun cargarListaContenidoOrden(){
+        listaOrdenes.forEach { orden ->
+            orden.listaContenidosOrdenes?.forEach { contenidoOrden ->
+                listaContenidoOrden.add(contenidoOrden)
             }
-
         }
     }
 
-    private fun navegarANuevaOrden() {
+    private fun navegarANuevaOrden(lista: List<OrdenDTO>) {
         startActivity(Intent(this, NuevaOrden::class.java).apply {
-            intent.putParcelableArrayListExtra("listaOrdenes", ArrayList(listaOrdenes))
+            intent.putParcelableArrayListExtra("listaOrdenes", ArrayList(lista))
         })
     }
 }

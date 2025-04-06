@@ -56,6 +56,8 @@ class Mesas : AppCompatActivity() {
     }
 
     private fun inicializarMesas() {
+        //CREA UN CUADRO DE DIALOGO PARA SOLICITAR EL NUMERO DE MESAS AL CORRER EL SISTEMA POR
+        //PRIMERA VESZ Y ALMACENA EL VALOR EN SharedPreferences
         repeat(9) { agregarMesa() }
     }
 

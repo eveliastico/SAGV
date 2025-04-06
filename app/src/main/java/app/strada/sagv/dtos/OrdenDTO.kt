@@ -15,7 +15,7 @@ data class OrdenDTO(
     var id: Long? = null,
     val fechaHora: LocalDateTime,
     val numMesa: Int,
-    val listaContenidosOrdenes: @RawValue List<ContenidoOrdenDTO>? = null
+    val listaContenidosOrdenes: List<ContenidoOrdenDTO>? = null
 ) : Parcelable {
     companion object {
         fun fromOrden(orden: Orden): OrdenDTO {

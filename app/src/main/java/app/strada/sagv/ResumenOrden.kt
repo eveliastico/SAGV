@@ -40,14 +40,6 @@ class ResumenOrden : AppCompatActivity() {
         listaProductosAgregados = intent.getParcelableArrayListExtra<ContenidoOrdenDTO>("listaProductosAgregados")!!
         listaItemsAgregados = intent.getParcelableArrayListExtra<ItemProducto>("listaItems")!!
 
-//        val productos = listOf(
-//            "Orden Asada" to 2,
-//            "Alambre" to 1,
-//            "Quezadilla" to 4,
-//            "Agua Piña" to 6,
-//            "Pay Limon" to 4
-//        )
-
         // Contenedor donde se agregarán los productos
         val linearResumen = findViewById<LinearLayout>(R.id.linearResumen)
         val btnOrdenar = findViewById<Button>(R.id.btnOrdenar)

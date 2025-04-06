@@ -12,6 +12,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import java.time.LocalDateTime
 
 interface APIOrden {
 
@@ -20,6 +21,12 @@ interface APIOrden {
 
     @GET("api/orden/find/{id}")
     suspend fun getOrdenById(@Body id: Long): Response<OrdenDTO>
+
+    @GET("api/orden/find/mesa/{numMesa}")
+    suspend fun getOrdenesByMesa(@Body numMesa: Int): Response<List<OrdenDTO>>
+
+    @GET("api/orden/find/by_fecha/{fechaMin}/{fechaMax}")
+    suspend fun getOrdenByFecha(@Body fechaMin: LocalDateTime, @Body fechaMax: LocalDateTime): Response<List<OrdenDTO>>
 
     @POST("api/orden/save")
     suspend fun saveOrden(@Body orden: OrdenDTO): Response<OrdenDTO>

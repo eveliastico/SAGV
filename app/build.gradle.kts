@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp") version "2.1.10-1.0.31"
 }
 android {
     namespace = "app.strada.sagv"
@@ -60,4 +61,7 @@ dependencies {
 
     // Dependencia para los logs de Retrofit (opcional, pero útil para debugging)
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    implementation ("androidx.room:room-runtime:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 }
