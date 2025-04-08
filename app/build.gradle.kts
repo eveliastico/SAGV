@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
     id("com.google.devtools.ksp") version "2.1.10-1.0.31"
+    id("com.google.dagger.hilt.android") version "2.44"
 }
 android {
     namespace = "app.strada.sagv"
@@ -64,4 +65,11 @@ dependencies {
 
     implementation ("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
+
+    // Hilt core
+    implementation("com.google.dagger:hilt-android:2.44")
+
+// Si usas KSP:
+    ksp("com.google.dagger:hilt-compiler:2.44")
+
 }
