@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import app.strada.sagv.DataClasses.ContenidoOrden
+import app.strada.sagv.DataClasses.ItemContenidoOrden
 import app.strada.sagv.DataClasses.Orden
 import app.strada.sagv.Menu
 import app.strada.sagv.apiService.APIClient
@@ -33,6 +34,7 @@ class RegistrarVenta : AppCompatActivity() {
     private lateinit var gridMesas: GridLayout
     private lateinit var listaContenidoOrdenDTO: MutableList<ContenidoOrdenDTO>
     private lateinit var listaOrdenes: List<OrdenDTO>
+    private lateinit var listaItemContenidoOrden: MutableList<ItemContenidoOrden>
     private var numeroMesas = 0
     // Ser recive la orden y se le añade la mesa.
     //private var objOrden: Orden? = null
@@ -90,14 +92,12 @@ class RegistrarVenta : AppCompatActivity() {
             val response = APIClient.apiOrden.getOrdenesByMesa(numMesa)
             if (response.isSuccessful) {
                 listaOrdenes = response.body() ?: emptyList()
-
                 if(listaOrdenes.isNullOrEmpty()){
                     Toast.makeText(this@RegistrarVenta, "No hay ordenes para esta mesa", LENGTH_LONG).show()
                     return
                 }else{
                     navegarANuevaOrden(listaOrdenes)
                 }
-
             }
         }catch (error: Exception){
             error.printStackTrace()
@@ -120,13 +120,25 @@ class RegistrarVenta : AppCompatActivity() {
      * 3. Cantidad
      * 4. Precio unitario
      */
-    private fun cargarListaContenidoOrden(){
+    private fun cargarListaContenidoOrden() {
         listaOrdenes.forEach { orden ->
             orden.listaContenidosOrdenes?.forEach { contenidoOrden ->
-                listaContenidoOrden.add(contenidoOrden)
+                listaContenidoOrdenDTO.add(contenidoOrden)
             }
         }
     }
+
+    private fun cargarItemContenidoOrden() {
+        var itemContenidoOrden: ItemContenidoOrden
+        listaOrdenes.forEach { orden ->
+            orden.listaContenidosOrdenes?.forEach { contenidoOrden ->
+                //itemContenidoOrden.
+            }
+        }
+    }
+
+
+
 
     private fun navegarANuevaOrden(lista: List<OrdenDTO>) {
         startActivity(Intent(this, NuevaOrden::class.java).apply {

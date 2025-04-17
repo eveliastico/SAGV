@@ -63,6 +63,7 @@ dependencies {
     // Dependencia para los logs de Retrofit (opcional, pero útil para debugging)
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
+    // Dependencia para Room(Base de datos local que usare para los productos)
     implementation ("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
